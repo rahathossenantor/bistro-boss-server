@@ -142,6 +142,21 @@ async function run() {
             res.send(data);
         });
 
+        // add new menu item
+        app.post("/menu", verifyToken, verifyIsAdmin, async (req, res) => {
+            const menuItem = req.body;
+            const result = await menuCollection.insertOne(menuItem);
+            res.send(result);
+        });
+
+        // delete single menu item
+        app.delete("/menu/:id", verifyToken, verifyIsAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await menuCollection.deleteOne(query);
+            res.send(result);
+        });
+
 
         // cart related APIs
         // get cart data based on user email
