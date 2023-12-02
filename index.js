@@ -142,10 +142,36 @@ async function run() {
             res.send(data);
         });
 
+        // get single menu item
+        app.get("/menu/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await menuCollection.findOne(query);
+            res.send(result);
+        });
+
         // add new menu item
         app.post("/menu", verifyToken, verifyIsAdmin, async (req, res) => {
             const menuItem = req.body;
             const result = await menuCollection.insertOne(menuItem);
+            res.send(result);
+        });
+
+        // update single menu item
+        app.patch("/menu/:id", verifyToken, verifyIsAdmin, async (req, res) => {
+            const id = req.params.id;
+            const menuItem = req.body;
+            const query = {_id: new ObjectId(id)};
+            const updatedMenuItem = {
+                $set: {
+                    name: menuItem.name,
+                    recipe: menuItem.recipe,
+                    image: menuItem.image,
+                    category: menuItem.category,
+                    price: menuItem.price
+                }
+            };
+            const result = await menuCollection.updateOne(query, updatedMenuItem);
             res.send(result);
         });
 
